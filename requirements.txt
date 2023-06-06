@@ -1,0 +1,13 @@
+pyautogui==0.9.54
+keyboard==0.13.5
+dearpygui==1.9.1
+requests==2.31.0
+urllib3==2.0.2
+certifi==2023.5.7
+charset-normalizer==3.1.0
+idna==3.4
+apscheduler==3.10.1
+pytz==2023.3
+setuptools==65.5.0
+six==1.16.0
+tzlocal==5.0.1
