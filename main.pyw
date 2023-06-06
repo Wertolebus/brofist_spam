@@ -17,7 +17,7 @@ def get_browser():
 def get_delay():
     return dpg.get_value('clickDelay')
 
-ver = 'public version 1.0'
+ver = 'public version 1.1'
 
 def cheat_panel():
     if get_browser() == 'ChromeHTML':
@@ -34,6 +34,7 @@ def cheat_panel():
         pgui.click(18, 260)
 
 def sandbox(region, room):
+    wb.open('http://brofist.io/modes/sandbox/c/index.html')
     if region == "ru":
         reg_coords = (1392, 816)
         if get_browser() == 'ChromeHTML':
@@ -182,10 +183,26 @@ def hns(region, room):
 
 def GUI():
     dpg.create_context()
-    dpg.create_viewport(width=600, x_pos=(1920-390)//2, y_pos=100, height=465, max_width=406, max_height=465, title='Brofist server spam bot', resizable=False, always_on_top=True)
+    dpg.create_viewport(width=600, x_pos=(1920-390)//2, y_pos=100, height=465, max_width=420, max_height=465, title='Brofist server spam bot', resizable=False, always_on_top=True)
     dpg.setup_dearpygui()
     
-    with dpg.window(label='Brofist Servers Activity', no_close=True, width=193, height=425, max_size=(193, 425), no_move=True, no_resize=True, no_scrollbar=True):
+    with dpg.viewport_menu_bar():
+        with dpg.menu(label='Stats'):
+            global needed_params
+            needed_params = ['mode','lan','rooms']
+            def _edit(param):
+                if param in needed_params:
+                    needed_params.remove(param)
+                else:
+                    needed_params.append(param)
+            
+            dpg.add_menu_item(label='location', callback=lambda: _edit('location'))
+            dpg.add_menu_item(label='ip', callback=lambda: _edit('ip'))
+            dpg.add_menu_item(label='connected', callback=lambda: _edit('connected'))
+            dpg.add_menu_item(label='uptime', callback=lambda: _edit('uptime'))
+            dpg.add_menu_item(label='socketsCount', callback=lambda: _edit('socketsCount'))
+    
+    with dpg.window(label='Brofist Servers Activity', no_close=True, width=213, height=425, no_move=True, no_resize=True, no_scrollbar=True):
         stats = dpg.add_text(parser(), tag='stats')
         def temp():
             dpg.set_value(stats, parser())
@@ -244,14 +261,14 @@ def GUI():
             dpg.enable_item('clickDelay')
             
         
-        dpg.add_button(label='Start', pos=(275, 170), callback=lambda : start(), tag='startButton')
-        dpg.add_text('Hold q to stop', pos=(245, 190))
-        dpg.add_text(str(dpg.get_value('tabs')).zfill(3), pos=(283, 307), show=False, tag='loadingText')
-        dpg.add_loading_indicator(pos=(270, 290), radius=5, style=1, show=False, tag='loadingIndicator')
+        dpg.add_button(label='Start', pos=(295, 190), callback=lambda : start(), tag='startButton')
+        dpg.add_text('Hold q to stop', pos=(265, 210))
+        dpg.add_text(str(dpg.get_value('tabs')).zfill(3), pos=(303, 307), show=False, tag='loadingText')
+        dpg.add_loading_indicator(pos=(290, 290), radius=5, style=1, show=False, tag='loadingIndicator')
         
-        dpg.add_text(ver, pos=(250, 399), color=(67, 67, 67), )
+        dpg.add_text(ver, pos=(270, 399), color=(67, 67, 67), )
     
-    with dpg.window(label='Configuration', pos=(192, 0), width=214, height=165, no_close=True, max_size=(214, 175), no_move=True, no_resize=True):
+    with dpg.window(label='Configuration', pos=(212, 0), width=214, height=165, no_close=True, no_move=True, no_resize=True):
         dpg.add_input_int(label='Tabs', pos=(70, 350-250), width=75, min_value=0, tag='tabs')
         dpg.add_input_int(label='Room', pos=(70, 325-250), width=75, min_value=0, tag='room')
         dpg.add_slider_float(label='Click Delay', width=100, min_value=0.3, max_value=1, pos=(10, 375-250), tag='clickDelay')   
@@ -270,7 +287,6 @@ def parser():
     r = req.get('http://172.104.138.121/getGamingServersInfo')
     servers = eval(r.text.strip('][').replace("true", 'True').replace('false', 'False'))
     params = ['location', 'ip', 'mode', 'lan', 'rooms', 'connected', 'uptime', 'socketsCount']
-    needed_params = ['mode','lan','rooms']
     result = ''
     for i in range(7):
         for j in range(len(needed_params)):
